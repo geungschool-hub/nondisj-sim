@@ -141,6 +141,18 @@ table.t tr.hl td{background:var(--yellow-bg);}
           border-radius:0 9px 9px 0;padding:10px 13px;font-size:15.5px;line-height:1.75;}
 .pq .expl b{color:var(--amber-ink);}
 
+/* ── ⑤ 핵형 카드 · ⑥ 가계도 문항 ── */
+.karyo-icon{display:flex;justify-content:center;align-items:flex-end;gap:2px;}
+.pedwrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;
+         margin:12px 0 4px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;}
+svg.pedfig{display:block;width:250px;height:auto;flex:0 0 auto;}
+.pedlegend{font-size:13.5px;color:var(--sub);line-height:1.9;flex:1 1 190px;min-width:170px;}
+.pedlegend svg{vertical-align:-4px;margin-right:4px;}
+.datbox{background:var(--blue-bg);border-left:4px solid var(--blue);border-radius:0 9px 9px 0;
+        padding:10px 13px;font-size:15.5px;line-height:1.8;margin-top:10px;}
+.datbox ul{margin:6px 0 0;padding-left:20px;}
+.datbox li{margin:2px 0;}
+
 /* ── 서술·모범답안 ── */
 textarea{
   width:100%;font:inherit;font-size:16px;line-height:1.7;padding:11px 13px;
@@ -321,6 +333,29 @@ html:not(.unlocked) #draftGate{display:flex;}
     <div class="msg info hide" id="pracLock"></div>
     <div id="pracBox"></div>
     <div class="msg good hide" id="pracDone"></div>
+  </div>
+
+  <!-- ══ ⑤ 핵형과 유전병 ══ -->
+  <!-- ★표의 내용도 전부 KARYO 배열에서 만든다 — ③의 다운증후군 연결과 같은 조건으로 잠긴다. -->
+  <div class="card">
+    <h2 class="green" style="margin-bottom:10px;">⑤ 염색체 수 이상과 유전병</h2>
+    <p class="sub">비분리로 만들어진 생식세포가 수정하면 어떤 유전병으로 나타나는지 정리한 것이다. ⑥ 문항의 자료로 쓴다.</p>
+    <div class="msg info hide" id="karyoLock"></div>
+    <div id="karyoBox"></div>
+  </div>
+
+  <!-- ══ ⑥ 가계도로 비분리 시기 찾기 ══ -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+      <h2 class="amber" style="flex:1 1 240px;margin-bottom:0;">⑥ 가계도로 비분리가 일어난 곳 찾기</h2>
+      <span class="tag" id="pedScoreTag">0 / 0</span>
+    </div>
+    <p class="sub" style="margin-top:10px;">
+      성염색체에서 비분리가 일어나면 <b>가계도와 형질</b>을 함께 보아 어느 부모의 어느 시기인지 좁힐 수 있다.
+    </p>
+    <div class="msg info hide" id="pedLock"></div>
+    <div id="pedBox"></div>
+    <div class="msg good hide" id="pedDone"></div>
   </div>
 
   <footer>
@@ -1222,9 +1257,73 @@ var PRACTICE = [
     ex:'감수 1분열의 비분리도, 감수 2분열의 비분리도 21번이 2개 든 <i>n</i>+1 생식세포를 만든다. 그러므로 <b>염색체 수만으로는 시기를 가릴 수 없다.</b> 시기를 가리려면 그 2개가 서로 다른 상동염색체인지(감수 1분열), 같은 염색체의 염색분체인지(감수 2분열)를 알아야 한다 — 3번 문항에서 쓴 근거가 그것이다.' }
 ];
 
+/* ══════════════════ ⑤ 염색체 수 이상과 유전병 ══════════════════
+   교과서 33쪽. ④와 같은 조건으로 잠긴다 — 다운증후군 연결이 ③에서 열리기 전에
+   이 표가 먼저 보이면 ②③의 발견이 무너진다.
+   ★사람 2n=46 기준이다. 이 모의실험의 2n=4 모형과 헷갈리지 않도록 표에 밝혀 둔다. */
+var KARYO = [
+  { name:'다운증후군',       marks:['21','21','21'], color:'#2f6fd6',
+    total:'47개', sex:'남자·여자 모두', where:'21번 (상염색체)',
+    note:'21번 염색체가 2개가 아니라 <b>3개</b>다.' },
+  { name:'에드워드증후군',   marks:['18','18','18'], color:'#2f6fd6',
+    total:'47개', sex:'남자·여자 모두', where:'18번 (상염색체)',
+    note:'18번 염색체가 <b>3개</b>다.' },
+  { name:'터너증후군',       marks:['X',''],          color:'#9b59b6',
+    total:'45개 (44+X)', sex:'여자', where:'성염색체',
+    note:'성염색체가 <b>X 하나뿐</b>이다. 점선은 없는 염색체를 나타낸 것이다.' },
+  { name:'클라인펠터증후군', marks:['X','X','Y'],     color:'#9b59b6',
+    total:'47개 (44+XXY)', sex:'남자', where:'성염색체',
+    note:'성염색체가 <b>XXY</b>로 3개다.' }
+];
+
+/* ══════════════════ ⑥ 가계도로 비분리가 일어난 곳 찾기 ══════════════════
+   ★성염색체 비분리 + 적록색맹을 겹쳐 놓으면 「어느 부모의 어느 시기인가」까지 좁혀진다.
+     ④의 3번(부·모 = 감수 1분열 / 같은 것 2개 = 감수 2분열)이 여기서 그대로 쓰인다.
+   ★유전자 표기는 1-2 가계도 활동과 같게 맞췄다 — 정상 X<sup>R</sup> · 적록색맹 X′.
+   g1 = 어머니 감수 2분열 / g2 = 부모는 알아도 시기는 판정 불가 / g3 = 아버지 감수 1분열(X와 Y가 함께). */
+var PEDQ = [
+  { id:'g1',
+    ped:{ f:{sex:'M', fill:'none'},    m:{sex:'F', fill:'carrier'},
+          c:{sex:'M', fill:'full', label:'아들', karyo:'44+XXY'} },
+    dat:['아버지는 적록색맹이 아니다.',
+         '어머니는 적록색맹은 아니지만 <b>보인자</b>이다.',
+         '아들은 <b>클라인펠터증후군</b>(44+XXY)이고 <b>적록색맹</b>이다.'],
+    q:'이 아들에게 염색체 비분리가 일어난 곳은 어디인가?',
+    ch:['어머니의 감수 1분열', '어머니의 감수 2분열', '아버지의 감수 1분열', '아버지의 감수 2분열'],
+    a:1,
+    ex:'아들이 Y염색체를 가졌으므로 Y는 아버지에게서 온 것이다. 그러면 <b>X염색체 2개는 모두 어머니에게서</b> 왔다. 어머니는 X<sup>R</sup>X′인데 아들이 적록색맹이므로 아들의 X염색체 2개는 둘 다 X′이다. 서로 다른 상동염색체가 아니라 <b>같은 X염색체가 복제된 염색분체 2개</b>가 함께 들어간 것이므로, 어머니의 <b>감수 2분열</b>에서 비분리가 일어났다. — ④의 3번에서 쓴 판별 근거가 그대로 쓰인다.' },
+
+  { id:'g2',
+    ped:{ f:{sex:'M', fill:'full'},    m:{sex:'F', fill:'none'},
+          c:{sex:'F', fill:'full', label:'딸', karyo:'44+X'} },
+    dat:['아버지는 <b>적록색맹</b>이다.',
+         '어머니는 적록색맹이 아니고 보인자도 아니다.',
+         '딸은 <b>터너증후군</b>(44+X)이고 <b>적록색맹</b>이다.'],
+    q:'이 딸의 염색체 비분리에 대한 설명으로 옳은 것은?',
+    ch:['아버지에게서 일어났고, 감수 1분열이다',
+        '아버지에게서 일어났고, 감수 2분열이다',
+        '어머니에게서 일어났으나, 시기는 판정할 수 없다',
+        '어머니에게서 일어났고, 감수 1분열이다'],
+    a:2,
+    ex:'딸이 가진 X염색체는 하나뿐이고 그것이 X′이다. 어머니는 X<sup>R</sup>X<sup>R</sup>이므로 X′를 줄 수 없다. 따라서 이 X′는 <b>아버지</b>에게서 왔고, 어머니의 생식세포에는 <b>성염색체가 들어 있지 않았다</b> — 비분리는 어머니에게서 일어난 것이다. 그러나 어머니의 감수 1분열 비분리도, 감수 2분열 비분리도 성염색체가 없는 생식세포를 만든다. 그러므로 <b>시기는 가릴 수 없다.</b>' },
+
+  { id:'g3',
+    ped:{ f:{sex:'M', fill:'none'},    m:{sex:'F', fill:'full'},
+          c:{sex:'M', fill:'none', label:'아들', karyo:'44+XXY'} },
+    dat:['아버지는 적록색맹이 아니다.',
+         '어머니는 <b>적록색맹</b>이다.',
+         '아들은 <b>클라인펠터증후군</b>(44+XXY)이고 적록색맹이 <b>아니다</b>.'],
+    q:'이 아들에게 염색체 비분리가 일어난 곳은 어디인가?',
+    ch:['아버지의 감수 1분열', '아버지의 감수 2분열', '어머니의 감수 1분열', '어머니의 감수 2분열'],
+    a:0,
+    ex:'어머니는 X′X′이므로 어머니가 주는 X염색체는 반드시 X′이다. 아들이 적록색맹이 아니려면 X<sup>R</sup>가 있어야 하는데, 그것은 <b>아버지</b>에게서 온 것이다. 아들은 Y염색체도 가졌으므로 아버지가 <b>X염색체와 Y염색체를 함께</b> 주었다. X염색체와 Y염색체는 <b>감수 1분열에서 서로 다른 극으로 갈라지는 짝</b>이므로, 둘이 함께 들어갔다는 것은 아버지의 <b>감수 1분열</b>에서 비분리가 일어났다는 뜻이다.' }
+];
+
 var pracEls = {};                     /* id → { choices:[버튼], expl:해설칸 } */
+function allQ(){ return PRACTICE.concat(PEDQ); }
 function pracById(id){
-  for (var i = 0; i < PRACTICE.length; i++){ if (PRACTICE[i].id === id) return PRACTICE[i]; }
+  var L = allQ();
+  for (var i = 0; i < L.length; i++){ if (L[i].id === id) return L[i]; }
   return null;
 }
 /* 잠금 조건 = ③의 다운증후군 연결과 같다(세 라운드 완료 + 요약 발문에 답함) */
@@ -1232,33 +1331,28 @@ function practiceOpen(){
   if (state.teacherUnlock) return true;
   return CASES.every(function(c){ return !!state.roundDone[c] && state.sumPick[c] !== undefined; });
 }
-function pracScore(){
+function scoreOf(list){
   var n = 0;
-  PRACTICE.forEach(function(p){ if (state.first['prac.' + p.id] === true) n++; });
+  list.forEach(function(p){ if (state.first['prac.' + p.id] === true) n++; });
   return n;
 }
-function pracAnswered(){
+function answeredOf(list){
   var n = 0;
-  PRACTICE.forEach(function(p){ if (state.pPick[p.id] !== undefined) n++; });
+  list.forEach(function(p){ if (state.pPick[p.id] !== undefined) n++; });
   return n;
 }
+function pracScore(){ return scoreOf(PRACTICE); }
+function pracAnswered(){ return answeredOf(PRACTICE); }
+function pedScore(){ return scoreOf(PEDQ); }
+function pedAnswered(){ return answeredOf(PEDQ); }
 function stripTag(html){ return String(html).replace(/<[^>]*>/g, ''); }
 
-function renderPractice(){
-  var box = document.getElementById('pracBox');
+/* 문항 목록 하나를 상자에 그린다 — ④와 ⑥이 같은 기계를 쓴다 */
+function renderQuizInto(list, boxId){
+  var box = document.getElementById(boxId);
   if (!box) return;
-  var open = practiceOpen();
-
-  var lock = document.getElementById('pracLock');
-  if (lock){
-    lock.className = 'msg info' + (open ? ' hide' : '');
-    lock.innerHTML = '🔒 세 라운드를 모두 만들고 각 라운드의 요약 발문에 답하면 열린다.';
-  }
   box.innerHTML = '';
-  pracEls = {};
-  if (!open){ updatePracDone(); return; }
-
-  PRACTICE.forEach(function(p, idx){
+  list.forEach(function(p, idx){
     var card = document.createElement('div');
     card.className = 'pq';
 
@@ -1266,6 +1360,20 @@ function renderPractice(){
     q.className = 'qtext';
     q.innerHTML = '<span class="qno">' + (idx + 1) + '</span>' + p.q;
     card.appendChild(q);
+
+    /* 가계도 문항이면 자료 상자와 그림을 발문 아래에 붙인다 */
+    if (p.dat){
+      var dat = document.createElement('div');
+      dat.className = 'datbox';
+      dat.innerHTML = '<b>[자료]</b><ul><li>' + p.dat.join('</li><li>') + '</li></ul>';
+      card.appendChild(dat);
+    }
+    if (p.ped){
+      var fig = document.createElement('div');
+      fig.className = 'pedwrap';
+      fig.innerHTML = trioSvg(p.ped) + pedLegend();
+      card.appendChild(fig);
+    }
 
     var wrap = document.createElement('div');
     wrap.className = 'choices';
@@ -1290,7 +1398,131 @@ function renderPractice(){
     pracEls[p.id] = { choices:btns, expl:ex };
     paintPractice(p.id);
   });
-  updatePracDone();
+}
+
+/* ── 가계도 그림 (부·모·자녀 3인) ──
+   ★손으로 좌표를 적지 않는다: 아래 한 벌이 세 문항 모두를 그린다.
+     칠하기 = 형질 표현(흰 정상 / 가운데 점 보인자 / 검게 채움 발현), 자녀 밑에 핵형을 적는다. */
+/* ★크기(r)를 인자로 받는다 — 범례의 작은 기호도 같은 코드로 그린다.
+   전에 문자열을 정규식으로 줄여 쓰다가 circle 의 cx/cy 까지 갈아엎어 원이 깨진 적이 있다. */
+function pedShape(cx, cy, sex, fill, r){
+  r = r || 21;
+  var sw = (r >= 18) ? 2.2 : 1.8;
+  var out = (sex === 'M')
+    ? '<rect x="' + (cx - r) + '" y="' + (cy - r) + '" width="' + (r * 2) + '" height="' + (r * 2) +
+      '" fill="' + (fill === 'full' ? '#33405A' : '#fff') +
+      '" stroke="#33405A" stroke-width="' + sw + '"></rect>'
+    : '<circle cx="' + cx + '" cy="' + cy + '" r="' + r +
+      '" fill="' + (fill === 'full' ? '#33405A' : '#fff') +
+      '" stroke="#33405A" stroke-width="' + sw + '"></circle>';
+  if (fill === 'carrier'){
+    out += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (r * 0.31).toFixed(1) +
+           '" fill="#33405A"></circle>';
+  }
+  return out;
+}
+function pedText(x, y, t, size, weight){
+  return '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="' + (size || 13) +
+         '" font-weight="' + (weight || '400') + '" fill="#33405A">' + t + '</text>';
+}
+function trioSvg(o){
+  var FX = 64, MX = 222, CX = 143, PY = 48, CY = 126, LINE = 'stroke="#33405A" stroke-width="2.2"';
+  return '<svg class="pedfig" viewBox="0 0 290 188" xmlns="http://www.w3.org/2000/svg" ' +
+         'role="img" aria-label="아버지 어머니 자녀 가계도">' +
+         '<line x1="' + (FX + 21) + '" y1="' + PY + '" x2="' + (MX - 21) + '" y2="' + PY + '" ' + LINE + '></line>' +
+         '<line x1="' + CX + '" y1="' + PY + '" x2="' + CX + '" y2="' + (CY - 21) + '" ' + LINE + '></line>' +
+         pedShape(FX, PY, o.f.sex, o.f.fill) +
+         pedShape(MX, PY, o.m.sex, o.m.fill) +
+         pedShape(CX, CY, o.c.sex, o.c.fill) +
+         pedText(FX, 20, '아버지') + pedText(MX, 20, '어머니') +
+         pedText(CX, CY + 38, o.c.label) +
+         pedText(CX, CY + 56, o.c.karyo, 13, '700') +
+         '</svg>';
+}
+function pedLegend(){
+  function mini(sex, fill){
+    return '<svg width="22" height="22" viewBox="0 0 30 30" aria-hidden="true">' +
+           pedShape(15, 15, sex, fill, 13) + '</svg>';
+  }
+  return '<div class="pedlegend">' +
+         mini('M', 'none') + '남자 &nbsp; ' + mini('F', 'none') + '여자<br>' +
+         mini('M', 'full') + '적록색맹인 사람<br>' +
+         mini('F', 'carrier') + '보인자 (겉으로는 정상)<br>' +
+         '<span style="font-size:12.5px;">정상 대립유전자 X<sup>R</sup> · 적록색맹 대립유전자 X′</span>' +
+         '</div>';
+}
+
+/* ── ⑤ 핵형 표 ── */
+function karyoIcon(marks, color){
+  var W = marks.length * 26 + 4, out = '<svg width="' + W + '" height="62" viewBox="0 0 ' + W +
+          ' 62" aria-hidden="true">';
+  marks.forEach(function(t, i){
+    var x = i * 26 + 4, ghost = (t === '');
+    out += '<rect x="' + x + '" y="2" width="16" height="40" rx="8" fill="' + (ghost ? 'none' : color) +
+           '" stroke="#33405A" stroke-width="1.4"' + (ghost ? ' stroke-dasharray="3,3"' : '') + '></rect>';
+    if (!ghost){
+      out += '<circle cx="' + (x + 8) + '" cy="22" r="4" fill="#fff" stroke="#33405A" stroke-width="1.2"></circle>';
+      out += '<text x="' + (x + 8) + '" y="57" text-anchor="middle" font-size="12" fill="#33405A">' + t + '</text>';
+    }
+  });
+  return out + '</svg>';
+}
+function renderKaryo(){
+  var box = document.getElementById('karyoBox');
+  if (!box) return;
+  var open = practiceOpen();
+  var lock = document.getElementById('karyoLock');
+  if (lock){
+    lock.className = 'msg info' + (open ? ' hide' : '');
+    lock.innerHTML = '🔒 세 라운드를 모두 만들고 각 라운드의 요약 발문에 답하면 열린다.';
+  }
+  if (!open){ box.innerHTML = ''; return; }
+
+  var rows = '';
+  KARYO.forEach(function(k){
+    rows += '<tr><td><b>' + k.name + '</b></td>' +
+            '<td><div class="karyo-icon">' + karyoIcon(k.marks, k.color) + '</div>' +
+            '<div class="cmpnote" style="margin-top:2px;">' + k.note + '</div></td>' +
+            '<td>' + k.total + '</td><td style="white-space:nowrap;">' + k.sex + '</td>' +
+            '<td style="white-space:nowrap;">' + k.where + '</td></tr>';
+  });
+  box.innerHTML =
+    '<div class="tbl-outer"><table class="t"><thead><tr>' +
+    '<th style="min-width:140px;">이름</th><th style="min-width:160px;">염색체 구성</th>' +
+    '<th style="min-width:134px;">체세포의<br>염색체 수</th><th style="min-width:116px;">성별</th>' +
+    '<th style="min-width:150px;">비분리가 일어난<br>염색체</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>' +
+    '<p class="sub" style="margin-top:10px;">' +
+    '※사람의 체세포는 2<i>n</i>=46이다. ②의 무대는 2<i>n</i>=4 모형이므로 수를 그대로 옮기지 않는다.<br>' +
+    '※상염색체 이상과 성염색체 이상 모두 <b>같은 원인</b>, 곧 생식세포분열에서의 염색체 비분리로 생긴다.</p>';
+}
+
+function renderPractice(){       /* ④⑤⑥을 한꺼번에 다시 그린다 */
+  var box = document.getElementById('pracBox');
+  if (!box) return;
+  var open = practiceOpen();
+
+  ['pracLock','pedLock'].forEach(function(id){
+    var lock = document.getElementById(id);
+    if (!lock) return;
+    lock.className = 'msg info' + (open ? ' hide' : '');
+    lock.innerHTML = '🔒 세 라운드를 모두 만들고 각 라운드의 요약 발문에 답하면 열린다.';
+  });
+
+  pracEls = {};
+  if (!open){
+    ['pracBox','pedBox'].forEach(function(id){
+      var el = document.getElementById(id);
+      if (el) el.innerHTML = '';
+    });
+    renderKaryo();
+    updatePracDone(); updatePedDone();
+    return;
+  }
+  renderQuizInto(PRACTICE, 'pracBox');
+  renderKaryo();
+  renderQuizInto(PEDQ, 'pedBox');
+  updatePracDone(); updatePedDone();
 }
 function paintPractice(id){
   var p = pracById(id), refs = pracEls[id];
@@ -1313,6 +1545,7 @@ function pickPractice(id, i){
   state.pPick[id] = i;
   paintPractice(id);
   updatePracDone();
+  updatePedDone();
   saveState();
   return true;
 }
@@ -1335,6 +1568,26 @@ function updatePracDone(){
                  (n === PRACTICE.length
                    ? ''
                    : ' 틀린 문항의 해설을 다시 읽고, 필요하면 ② 무대에서 그 경우를 다시 만들어 확인하시오.');
+}
+function updatePedDone(){
+  var open = practiceOpen();
+  var sc = document.getElementById('pedScoreTag');
+  if (sc) sc.textContent = (open ? pedScore() : 0) + ' / ' + PEDQ.length;
+
+  var el = document.getElementById('pedDone');
+  if (!el) return;
+  if (!open || pedAnswered() < PEDQ.length){
+    el.className = 'msg good hide';
+    el.innerHTML = '';
+    return;
+  }
+  var n = pedScore();
+  el.className = 'msg good';
+  el.innerHTML = '가계도 문항 ' + PEDQ.length + '문항을 모두 풀었다. 첫 번째 시도에 옳게 답한 것은 <b>' +
+                 n + '문항</b>이다. ' +
+                 '세 문항의 판별 근거는 하나다 — <b>한 생식세포에 함께 들어간 두 염색체가 서로 다른 짝이면 감수 1분열, ' +
+                 '같은 것이 복제된 분체 2개이면 감수 2분열</b>이다. ' +
+                 '어느 쪽인지 가릴 자료가 없으면 <b>판정할 수 없다</b>고 답해야 한다.';
 }
 
 /* ── 서술·모범답안 잠금 ── */
