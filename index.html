@@ -141,7 +141,19 @@ table.t tr.hl td{background:var(--yellow-bg);}
           border-radius:0 9px 9px 0;padding:10px 13px;font-size:15.5px;line-height:1.75;}
 .pq .expl b{color:var(--amber-ink);}
 
-display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;
+/* ── 힌트 2단 (④⑤) — 답 대신 관찰 지점을 먼저 가리킨다 ──
+   ★기록에 남기지 않는다(교사 결정 2026-08-20) — 「누르면 감점」으로 오해할 여지를 없앤다.
+   ★답을 고른 뒤에도 접힌 채로 남는다. */
+.hintwrap{margin-top:10px;}
+.hintbtn{font:inherit;font-size:15px;min-height:44px;padding:9px 15px;margin-top:8px;
+         border:2px dashed var(--blue);border-radius:10px;background:#fff;color:var(--blue);
+         font-weight:700;cursor:pointer;}
+.hintbox{margin-top:8px;background:var(--blue-bg);border-left:4px solid var(--blue);
+         border-radius:0 9px 9px 0;padding:10px 13px;font-size:15.5px;line-height:1.75;}
+.hintbox b{color:var(--blue);}
+
+/* ── ⑤ 가계도 문항 ── */
+.pedwrap{display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center;
          margin:12px 0 4px;padding:10px;border:1px solid var(--line);border-radius:10px;background:#fff;}
 svg.pedfig{display:block;width:250px;height:auto;flex:0 0 auto;}
 .pedlegend{font-size:13.5px;color:var(--sub);line-height:1.9;flex:1 1 190px;min-width:170px;}
@@ -1228,6 +1240,8 @@ function updateCmp(){
 var PRACTICE = [
   { id:'p1',
     q:'감수 1분열에서 21번 염색체가 분리되지 않았다. 이때 만들어진 생식세포 4개의 염색체 수로 옳은 것은?',
+    hint:['②에서 만든 <b>라운드 2</b>(감수 1분열 비분리)의 생식세포 4개를 다시 보시오. 21번이 몇 개씩 들어 있는가?',
+          '감수 1분열에서 21번이 한쪽 극으로 함께 가면, 그 뒤 감수 2분열이 정상이어도 <b>딸세포 4개가 모두</b> 그 영향을 받는다.'],
     ch:['<i>n</i>, <i>n</i>, <i>n</i>, <i>n</i>',
         '<i>n</i>+1, <i>n</i>+1, <i>n</i>−1, <i>n</i>−1',
         '<i>n</i>, <i>n</i>, <i>n</i>+1, <i>n</i>−1',
@@ -1240,6 +1254,8 @@ var PRACTICE = [
 
   { id:'p2',
     q:'염색체 수가 정상인 생식세포와 비정상인 생식세포가 <b>1 : 1</b>로 나타나는 경우는?',
+    hint:['③ 비교표에서 세 경우의 「정상 : 비정상」 칸을 나란히 보시오.',
+          '감수 2분열의 비분리는 <b>두 딸세포 중 한쪽에서만</b> 일어난다. 나머지 한쪽은 정상으로 갈라진다.'],
     ch:['정상적인 생식세포분열',
         '감수 1분열에서의 염색체 비분리',
         '감수 2분열에서의 염색체 비분리',
@@ -1252,6 +1268,8 @@ var PRACTICE = [
 
   { id:'p3',
     q:'어떤 <i>n</i>+1 생식세포에 21번 염색체가 2개 들어 있었다. 그 2개는 <b>하나는 아버지에게서, 하나는 어머니에게서</b> 온 것이었다. 비분리가 일어난 시기는?',
+    hint:['생식세포 안에 든 21번 2개가 <b>서로 다른 상동염색체</b>인지, <b>같은 염색체의 염색분체</b>인지를 먼저 가리시오.',
+          '부에게서 온 21번과 모에게서 온 21번은 서로 <b>상동염색체</b>다. 상동염색체가 서로 다른 극으로 갈라지는 것이 어느 분열인지 ②의 국면 1에서 확인하시오.'],
     ch:['감수 1분열',
         '감수 2분열',
         '체세포분열',
@@ -1264,6 +1282,8 @@ var PRACTICE = [
 
   { id:'p4',
     q:'21번 염색체가 2개 들어 있는 <i>n</i>+1 생식세포가 정상적인 생식세포와 수정하였다. 이 수정란의 21번 염색체 수와 전체 염색체 수는?',
+    hint:['수정란의 염색체는 두 생식세포의 염색체를 합한 것이다. 각 생식세포에 21번이 몇 개 들어 있는지 먼저 세시오.',
+          '사람의 정상 수정란은 46개이다. 21번이 하나 더 들어오면 그만큼 늘어난다.'],
     ch:['21번 2개 · 전체 46개',
         '21번 3개 · 전체 47개',
         '21번 3개 · 전체 46개',
@@ -1277,6 +1297,8 @@ var PRACTICE = [
 
   { id:'p5',
     q:'21번 염색체가 들어 있지 않은 <i>n</i>−1 생식세포가 정상적인 생식세포와 수정하였다. 이 수정란의 전체 염색체 수는?',
+    hint:['<i>n</i>−1 생식세포에는 21번이 몇 개 들어 있는가?',
+          '정상 수정란의 염색체 수를 먼저 적고, 모자라는 수만큼 빼시오.'],
     ch:['44개', '45개', '46개', '47개'],
     a:1,
     ex:'<i>n</i>−1 생식세포에는 21번이 없으므로 수정란의 21번은 정상 생식세포에서 온 1개뿐이다. 따라서 전체 염색체 수는 46−1=<b>45개</b>이다.',
@@ -1299,6 +1321,8 @@ var PEDQ = [
          '어머니는 적록색맹은 아니지만 <b>보인자</b>이다.',
          '아들은 <b>클라인펠터증후군</b>(44+XXY)이고 <b>적록색맹</b>이다.'],
     q:'이 아들에게 염색체 비분리가 일어난 곳은 어디인가?',
+    hint:['아들의 성염색체는 X 2개와 Y 1개이다. <b>Y가 누구에게서 왔는지</b>부터 정하시오.',
+          '아들이 적록색맹이므로 X 2개에는 X<sup>R</sup>가 하나도 없다. 그 2개가 서로 다른 X인지 <b>같은 X의 염색분체</b>인지를 어머니의 유전자형으로 따지시오.'],
     ch:['어머니의 감수 1분열', '어머니의 감수 2분열', '아버지의 감수 1분열', '아버지의 감수 2분열'],
     a:1,
     ex:'아들이 Y염색체를 가졌으므로 Y는 아버지에게서 온 것이다. 그러면 <b>X염색체 2개는 모두 어머니에게서</b> 왔다. 어머니는 X<sup>R</sup>X′인데 아들이 적록색맹이므로 아들의 X염색체 2개는 둘 다 X′이다. 서로 다른 상동염색체가 아니라 <b>같은 X염색체가 복제된 염색분체 2개</b>가 함께 들어간 것이므로, 어머니의 <b>감수 2분열</b>에서 비분리가 일어났다. — ④의 3번에서 쓴 판별 근거가 그대로 쓰인다.',
@@ -1314,6 +1338,8 @@ var PEDQ = [
          '어머니는 적록색맹이 아니고 보인자도 아니다.',
          '딸은 <b>터너증후군</b>(44+X)이고 <b>적록색맹</b>이다.'],
     q:'이 딸의 염색체 비분리에 대한 설명으로 옳은 것은?',
+    hint:['딸의 성염색체는 X 하나뿐이다. 그 X가 아버지와 어머니 중 누구에게서 온 것인지 <b>형질로</b> 가리시오.',
+          '한쪽 부모의 생식세포에 성염색체가 <b>없었다</b>는 뜻이다. 감수 1분열 비분리와 감수 2분열 비분리 중 어느 쪽이 그런 생식세포를 만드는지 둘 다 확인하시오.'],
     ch:['아버지에게서 일어났고, 감수 1분열이다',
         '아버지에게서 일어났고, 감수 2분열이다',
         '어머니에게서 일어났으나, 시기는 판정할 수 없다',
@@ -1335,6 +1361,8 @@ var PEDQ = [
          '어머니는 <b>적록색맹</b>이다.',
          '아들은 <b>클라인펠터증후군</b>(44+XXY)이고 적록색맹이 <b>아니다</b>.'],
     q:'이 아들에게 염색체 비분리가 일어난 곳은 어디인가?',
+    hint:['어머니가 적록색맹이므로 어머니가 주는 X는 모두 X′이다. 아들이 색각 정상이려면 X<sup>R</sup>가 어디에서 와야 하는가?',
+          'X<sup>R</sup>와 Y가 <b>한 생식세포에 함께</b> 들어갔다는 뜻이다. X와 Y는 짝을 이루는 성염색체이므로, 둘이 함께 가는 것이 어느 시기의 비분리인지 생각하시오.'],
     ch:['아버지의 감수 1분열', '아버지의 감수 2분열', '어머니의 감수 1분열', '어머니의 감수 2분열'],
     a:0,
     ex:'어머니는 X′X′이므로 어머니가 주는 X염색체는 반드시 X′이다. 아들이 적록색맹이 아니려면 X<sup>R</sup>가 있어야 하는데, 그것은 <b>아버지</b>에게서 온 것이다. 아들은 Y염색체도 가졌으므로 아버지가 <b>X염색체와 Y염색체를 함께</b> 주었다. X염색체와 Y염색체는 <b>감수 1분열에서 서로 다른 극으로 갈라지는 짝</b>이므로, 둘이 함께 들어갔다는 것은 아버지의 <b>감수 1분열</b>에서 비분리가 일어났다는 뜻이다.',
@@ -1461,6 +1489,30 @@ function renderQuizInto(list, boxId){
       btns.push(b);
     });
     card.appendChild(wrap);
+
+    /* ── 힌트 2단 — 1단(어디를 볼 것인가)을 연 뒤에만 2단(판단 기준)이 열린다 ──
+       ★문구는 배열에 있고 마크업에는 없다. ★기록하지 않는다. ★답을 고른 뒤에도 남는다. */
+    if (p.hint && p.hint.length === 2){
+      var hw = document.createElement('div');
+      hw.className = 'hintwrap';
+      var hb1 = document.createElement('button');
+      hb1.type = 'button'; hb1.className = 'hintbtn'; hb1.textContent = '💡 힌트 보기';
+      var hx1 = document.createElement('div');
+      hx1.className = 'hintbox'; hx1.style.display = 'none';
+      hx1.innerHTML = '<b>힌트 ① 어디를 볼 것인가</b><br>' + p.hint[0];
+      var hb2 = document.createElement('button');
+      hb2.type = 'button'; hb2.className = 'hintbtn'; hb2.textContent = '💡 힌트를 하나 더 보기';
+      hb2.style.display = 'none';
+      var hx2 = document.createElement('div');
+      hx2.className = 'hintbox'; hx2.style.display = 'none';
+      hx2.innerHTML = '<b>힌트 ② 판단 기준</b><br>' + p.hint[1];
+      hb1.onclick = function(){
+        hx1.style.display = 'block'; hb1.style.display = 'none'; hb2.style.display = 'inline-block';
+      };
+      hb2.onclick = function(){ hx2.style.display = 'block'; hb2.style.display = 'none'; };
+      hw.appendChild(hb1); hw.appendChild(hx1); hw.appendChild(hb2); hw.appendChild(hx2);
+      card.appendChild(hw);
+    }
 
     var ex = document.createElement('div');
     ex.className = 'expl';
