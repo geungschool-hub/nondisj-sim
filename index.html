@@ -153,6 +153,23 @@ svg.pedfig{display:block;width:250px;height:auto;flex:0 0 auto;}
 .datbox ul{margin:6px 0 0;padding-left:20px;}
 .datbox li{margin:2px 0;}
 
+/* ── 해설 안의 작은 도식 (고른 뒤에만 나온다) ── */
+.figwrap{margin-top:11px;}
+.fig{display:flex;flex-wrap:wrap;align-items:flex-start;justify-content:center;gap:6px 10px;
+     background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:7px;}
+.flead{flex:0 0 auto;align-self:center;font-size:13px;font-weight:700;color:var(--amber-ink);
+       background:var(--amber-bg);border-radius:999px;padding:4px 11px;white-space:nowrap;}
+.fcell{display:flex;flex-direction:column;align-items:center;gap:3px;}
+.fbox{display:flex;align-items:flex-end;justify-content:center;gap:5px;
+      min-width:52px;min-height:62px;padding:7px 11px;background:#FBFCFE;
+      border:2px solid #8A93A6;border-radius:44px/38px;}
+.fbox.zyg{border-color:#33405A;border-width:2.6px;border-radius:14px;background:#F4F7FC;}
+.fcap{font-size:12px;font-weight:700;color:#33405A;text-align:center;max-width:130px;line-height:1.35;}
+.fop{align-self:center;font-size:19px;font-weight:700;color:var(--sub);padding:0 2px;}
+.chrp{margin:0;text-align:center;}
+.chrp figcaption{font-size:10.5px;color:#33405A;margin-top:1px;white-space:nowrap;}
+.fnote{font-size:14.5px;line-height:1.7;color:var(--ink);padding:0 2px;}
+
 /* ── 서술·모범답안 ── */
 textarea{
   width:100%;font:inherit;font-size:16px;line-height:1.7;padding:11px 13px;
@@ -353,6 +370,15 @@ html:not(.unlocked) #draftGate{display:flex;}
     <p class="sub" style="margin-top:10px;">
       성염색체에서 비분리가 일어나면 <b>가계도와 형질</b>을 함께 보아 어느 부모의 어느 시기인지 좁힐 수 있다.
     </p>
+    <!-- ★단서를 밝혀 두지 않으면 추론이 성립하지 않는다(교사 지적 2026-08-20).
+         ②는 교차 이야기다 — 교차가 일어나면 자매염색분체의 대립유전자가 달라질 수 있어
+         「색이 같으면 염색분체」라는 판별 근거가 무너진다. 교과서 범위 밖이므로 가정으로 못박는다. -->
+    <div class="msg warn" style="margin-top:4px;font-size:15px;">
+      <b>이 문항들의 단서</b><br>
+      ① 적록색맹은 <b>정상 대립유전자 X<sup>R</sup>가 하나도 없을 때</b>에만 나타난다.
+      X<sup>R</sup>가 하나라도 있으면 겉으로는 정상이다.<br>
+      ② <b>교차는 일어나지 않은 것으로 한다.</b> 그래야 「같은 염색체의 염색분체 2개는 대립유전자가 서로 같다」가 성립한다.
+    </div>
     <div class="msg info hide" id="pedLock"></div>
     <div id="pedBox"></div>
     <div class="msg good hide" id="pedDone"></div>
@@ -1212,7 +1238,10 @@ var PRACTICE = [
         '<i>n</i>, <i>n</i>, <i>n</i>+1, <i>n</i>−1',
         '<i>n</i>+1, <i>n</i>−1, <i>n</i>−1, <i>n</i>−1'],
     a:1,
-    ex:'감수 1분열에서 상동염색체가 분리되지 않으면 딸세포 <b>2개가 모두</b> 비정상이 된다. 이어지는 감수 2분열은 정상적으로 일어나므로 그 결과 생식세포 4개가 모두 비정상이 된다.' },
+    ex:'감수 1분열에서 상동염색체가 분리되지 않으면 딸세포 <b>2개가 모두</b> 비정상이 된다. 이어지는 감수 2분열은 정상적으로 일어나므로 그 결과 생식세포 4개가 모두 비정상이 된다.',
+    fig:{ rows:[{ cells:[ G(['bp','ap','am'], '<i>n</i>+1'), G(['bp','ap','am'], '<i>n</i>+1'),
+                          G(['bm'], '<i>n</i>−1'), G(['bm'], '<i>n</i>−1') ] }],
+          cap:'21번 두 개가 함께 들어간 생식세포 2개와 21번이 하나도 없는 생식세포 2개가 만들어진다. <b>정상인 것이 하나도 없다.</b>' } },
 
   { id:'p2',
     q:'염색체 수가 정상인 생식세포와 비정상인 생식세포가 <b>1 : 1</b>로 나타나는 경우는?',
@@ -1221,7 +1250,10 @@ var PRACTICE = [
         '감수 2분열에서의 염색체 비분리',
         '감수 1분열과 감수 2분열에서 모두 일어난 염색체 비분리'],
     a:2,
-    ex:'감수 2분열의 비분리는 두 딸세포 중 <b>한쪽에서만</b> 일어난다. 비분리가 일어나지 않은 딸세포에서는 정상 생식세포 2개(<i>n</i>, <i>n</i>)가 만들어지고, 일어난 딸세포에서는 <i>n</i>+1과 <i>n</i>−1이 하나씩 만들어진다.' },
+    ex:'감수 2분열의 비분리는 두 딸세포 중 <b>한쪽에서만</b> 일어난다. 비분리가 일어나지 않은 딸세포에서는 정상 생식세포 2개(<i>n</i>, <i>n</i>)가 만들어지고, 일어난 딸세포에서는 <i>n</i>+1과 <i>n</i>−1이 하나씩 만들어진다.',
+    fig:{ rows:[{ cells:[ G(['bp','ap'], '<i>n</i>'), G(['bp','ap'], '<i>n</i>'),
+                          G(['bm','am','am'], '<i>n</i>+1'), G(['bm'], '<i>n</i>−1') ] }],
+          cap:'정상인 것 2개와 비정상인 것 2개가 <b>1 : 1</b>로 나타난다. <i>n</i>+1에 든 21번 2개는 <b>색이 같다</b> — 같은 염색체의 염색분체다.' } },
 
   { id:'p3',
     q:'어떤 <i>n</i>+1 생식세포에 21번 염색체가 2개 들어 있었다. 그 2개는 <b>하나는 아버지에게서, 하나는 어머니에게서</b> 온 것이었다. 비분리가 일어난 시기는?',
@@ -1230,7 +1262,10 @@ var PRACTICE = [
         '체세포분열',
         '이 자료만으로는 판정할 수 없다'],
     a:0,
-    ex:'아버지에게서 온 21번과 어머니에게서 온 21번은 <b>상동염색체</b>이다. 상동염색체가 갈라지는 시기는 감수 1분열이므로, 이 둘이 한 생식세포에 함께 들어갔다면 감수 1분열에서 분리되지 않은 것이다. 감수 2분열의 비분리였다면 같은 염색체가 복제된 <b>염색분체 2개</b>가 들어가므로 둘 다 한쪽 부모에게서 온 것이 된다.' },
+    ex:'아버지에게서 온 21번과 어머니에게서 온 21번은 <b>상동염색체</b>이다. 상동염색체가 갈라지는 시기는 감수 1분열이므로, 이 둘이 한 생식세포에 함께 들어갔다면 감수 1분열에서 분리되지 않은 것이다. 감수 2분열의 비분리였다면 같은 염색체가 복제된 <b>염색분체 2개</b>가 들어가므로 둘 다 한쪽 부모에게서 온 것이 된다.',
+    fig:{ rows:[{ lead:'감수 1분열 비분리', cells:[ G(['ap','am'], '색이 <b>다르다</b><br>서로 다른 21번') ] },
+                { lead:'감수 2분열 비분리', cells:[ G(['am','am'], '색이 <b>같다</b><br>같은 21번의 분체') ] }],
+          cap:'문항의 <i>n</i>+1은 <b>아버지에게서 온 것과 어머니에게서 온 것</b>이었다 — 위쪽이다.' } },
 
   { id:'p4',
     q:'21번 염색체가 2개 들어 있는 <i>n</i>+1 생식세포가 정상적인 생식세포와 수정하였다. 이 수정란의 21번 염색체 수와 전체 염색체 수는?',
@@ -1239,13 +1274,21 @@ var PRACTICE = [
         '21번 3개 · 전체 46개',
         '21번 1개 · 전체 45개'],
     a:1,
-    ex:'정상적인 생식세포에는 21번이 1개 들어 있으므로 2+1=3개가 된다. 21번을 제외한 나머지는 정상이므로 전체 염색체 수는 46+1=<b>47개</b>이다. 21번 염색체를 3개 가진 사람은 <b>다운증후군</b>으로 나타난다.' },
+    ex:'정상적인 생식세포에는 21번이 1개 들어 있으므로 2+1=3개가 된다. 21번을 제외한 나머지는 정상이므로 전체 염색체 수는 46+1=<b>47개</b>이다. 21번 염색체를 3개 가진 사람은 <b>다운증후군</b>으로 나타난다.',
+    fig:{ rows:[{ cells:[ G(['n21','n21'], '<i>n</i>+1 생식세포<br>21번 2개'), OP('+'),
+                          G(['n21'], '정상 생식세포<br>21번 1개'), OP('→'),
+                          Z(['n21','n21','n21'], '수정란<br>21번 <b>3개</b> · 전체 <b>47개</b>') ] }],
+          cap:'그림에는 21번만 그렸다. 나머지 염색체는 정상이므로 46개에서 <b>하나만</b> 늘어난다.' } },
 
   { id:'p5',
     q:'21번 염색체가 들어 있지 않은 <i>n</i>−1 생식세포가 정상적인 생식세포와 수정하였다. 이 수정란의 전체 염색체 수는?',
     ch:['44개', '45개', '46개', '47개'],
     a:1,
-    ex:'<i>n</i>−1 생식세포에는 21번이 없으므로 수정란의 21번은 정상 생식세포에서 온 1개뿐이다. 따라서 전체 염색체 수는 46−1=<b>45개</b>이다.' },
+    ex:'<i>n</i>−1 생식세포에는 21번이 없으므로 수정란의 21번은 정상 생식세포에서 온 1개뿐이다. 따라서 전체 염색체 수는 46−1=<b>45개</b>이다.',
+    fig:{ rows:[{ cells:[ G(['none'], '<i>n</i>−1 생식세포<br>21번 없음'), OP('+'),
+                          G(['n21'], '정상 생식세포<br>21번 1개'), OP('→'),
+                          Z(['n21'], '수정란<br>21번 <b>1개</b> · 전체 <b>45개</b>') ] }],
+          cap:'점선은 <b>없는 염색체</b>를 나타낸 것이다. 46개에서 <b>하나가 모자란다.</b>' } },
 
   { id:'p6',
     q:'어떤 사람의 체세포를 조사하였더니 21번 염색체가 3개였다. <b>이 결과만으로</b> 비분리가 감수 1분열에서 일어났는지 감수 2분열에서 일어났는지 판정할 수 있는가?',
@@ -1254,7 +1297,14 @@ var PRACTICE = [
         '판정할 수 없다. 두 시기 모두 21번이 2개 든 생식세포를 만든다',
         '판정할 수 없다. 21번이 3개인 수정란은 비분리가 없어도 만들어진다'],
     a:2,
-    ex:'감수 1분열의 비분리도, 감수 2분열의 비분리도 21번이 2개 든 <i>n</i>+1 생식세포를 만든다. 그러므로 <b>염색체 수만으로는 시기를 가릴 수 없다.</b> 시기를 가리려면 그 2개가 서로 다른 상동염색체인지(감수 1분열), 같은 염색체의 염색분체인지(감수 2분열)를 알아야 한다 — 3번 문항에서 쓴 근거가 그것이다.' }
+    ex:'감수 1분열의 비분리도, 감수 2분열의 비분리도 21번이 2개 든 <i>n</i>+1 생식세포를 만든다. 그러므로 <b>염색체 수만으로는 시기를 가릴 수 없다.</b> 시기를 가리려면 그 2개가 서로 다른 상동염색체인지(감수 1분열), 같은 염색체의 염색분체인지(감수 2분열)를 알아야 한다 — 3번 문항에서 쓴 근거가 그것이다.',
+    fig:{ rows:[{ lead:'감수 1분열 비분리',
+                  cells:[ G(['ap','am'], '<i>n</i>+1'), OP('+'), G(['n21'], '정상'), OP('→'),
+                          Z(['n21','n21','n21'], '21번 <b>3개</b>') ] },
+                { lead:'감수 2분열 비분리',
+                  cells:[ G(['am','am'], '<i>n</i>+1'), OP('+'), G(['n21'], '정상'), OP('→'),
+                          Z(['n21','n21','n21'], '21번 <b>3개</b>') ] }],
+          cap:'<b>수정란만 보면 둘이 똑같다.</b> 갈리는 곳은 생식세포 안의 21번 2개가 <b>같은 것인가 다른 것인가</b>뿐이다.' } }
 ];
 
 /* ══════════════════ ⑤ 염색체 수 이상과 유전병 ══════════════════
@@ -1291,7 +1341,11 @@ var PEDQ = [
     q:'이 아들에게 염색체 비분리가 일어난 곳은 어디인가?',
     ch:['어머니의 감수 1분열', '어머니의 감수 2분열', '아버지의 감수 1분열', '아버지의 감수 2분열'],
     a:1,
-    ex:'아들이 Y염색체를 가졌으므로 Y는 아버지에게서 온 것이다. 그러면 <b>X염색체 2개는 모두 어머니에게서</b> 왔다. 어머니는 X<sup>R</sup>X′인데 아들이 적록색맹이므로 아들의 X염색체 2개는 둘 다 X′이다. 서로 다른 상동염색체가 아니라 <b>같은 X염색체가 복제된 염색분체 2개</b>가 함께 들어간 것이므로, 어머니의 <b>감수 2분열</b>에서 비분리가 일어났다. — ④의 3번에서 쓴 판별 근거가 그대로 쓰인다.' },
+    ex:'아들이 Y염색체를 가졌으므로 Y는 아버지에게서 온 것이다. 그러면 <b>X염색체 2개는 모두 어머니에게서</b> 왔다. 어머니는 X<sup>R</sup>X′인데 아들이 적록색맹이므로 아들의 X염색체 2개는 둘 다 X′이다. 서로 다른 상동염색체가 아니라 <b>같은 X염색체가 복제된 염색분체 2개</b>가 함께 들어간 것이므로, 어머니의 <b>감수 2분열</b>에서 비분리가 일어났다. — ④의 3번에서 쓴 판별 근거가 그대로 쓰인다.',
+    fig:{ rows:[{ cells:[ G(['Xp','Xp'], '어머니의 생식세포<br>X′가 <b>2개</b>'), OP('+'),
+                          G(['Y'], '아버지의 생식세포'), OP('→'),
+                          Z(['Xp','Xp','Y'], '아들 <b>44+XXY</b><br>적록색맹') ] }],
+          cap:'어머니는 X<sup>R</sup>X′인데 아들에게 간 X염색체는 둘 다 X′다 — <b>같은 X염색체의 염색분체 2개</b>, 곧 <b>감수 2분열</b>이다.' } },
 
   { id:'g2',
     ped:{ f:{sex:'M', fill:'full'},    m:{sex:'F', fill:'none'},
@@ -1305,7 +1359,14 @@ var PEDQ = [
         '어머니에게서 일어났으나, 시기는 판정할 수 없다',
         '어머니에게서 일어났고, 감수 1분열이다'],
     a:2,
-    ex:'딸이 가진 X염색체는 하나뿐이고 그것이 X′이다. 어머니는 X<sup>R</sup>X<sup>R</sup>이므로 X′를 줄 수 없다. 따라서 이 X′는 <b>아버지</b>에게서 왔고, 어머니의 생식세포에는 <b>성염색체가 들어 있지 않았다</b> — 비분리는 어머니에게서 일어난 것이다. 그러나 어머니의 감수 1분열 비분리도, 감수 2분열 비분리도 성염색체가 없는 생식세포를 만든다. 그러므로 <b>시기는 가릴 수 없다.</b>' },
+    ex:'딸이 가진 X염색체는 하나뿐이고 그것이 X′이다. 어머니는 X<sup>R</sup>X<sup>R</sup>이므로 X′를 줄 수 없다. 따라서 이 X′는 <b>아버지</b>에게서 왔고, 어머니의 생식세포에는 <b>성염색체가 들어 있지 않았다</b> — 비분리는 어머니에게서 일어난 것이다. 그러나 어머니의 감수 1분열 비분리도, 감수 2분열 비분리도 성염색체가 없는 생식세포를 만든다. 그러므로 <b>시기는 가릴 수 없다.</b>',
+    fig:{ rows:[{ lead:'어머니 감수 1분열 비분리',
+                  cells:[ G(['none'], '성염색체 없음'), OP('+'), G(['Xp'], '아버지'), OP('→'),
+                          Z(['Xp'], '딸 <b>44+X</b> · 적록색맹') ] },
+                { lead:'어머니 감수 2분열 비분리',
+                  cells:[ G(['none'], '성염색체 없음'), OP('+'), G(['Xp'], '아버지'), OP('→'),
+                          Z(['Xp'], '딸 <b>44+X</b> · 적록색맹') ] }],
+          cap:'어머니에게서 일어난 것은 분명하다. 그러나 <b>두 시기가 똑같은 딸을 만든다</b> — 그래서 시기는 판정할 수 없다.' } },
 
   { id:'g3',
     ped:{ f:{sex:'M', fill:'none'},    m:{sex:'F', fill:'full'},
@@ -1316,8 +1377,60 @@ var PEDQ = [
     q:'이 아들에게 염색체 비분리가 일어난 곳은 어디인가?',
     ch:['아버지의 감수 1분열', '아버지의 감수 2분열', '어머니의 감수 1분열', '어머니의 감수 2분열'],
     a:0,
-    ex:'어머니는 X′X′이므로 어머니가 주는 X염색체는 반드시 X′이다. 아들이 적록색맹이 아니려면 X<sup>R</sup>가 있어야 하는데, 그것은 <b>아버지</b>에게서 온 것이다. 아들은 Y염색체도 가졌으므로 아버지가 <b>X염색체와 Y염색체를 함께</b> 주었다. X염색체와 Y염색체는 <b>감수 1분열에서 서로 다른 극으로 갈라지는 짝</b>이므로, 둘이 함께 들어갔다는 것은 아버지의 <b>감수 1분열</b>에서 비분리가 일어났다는 뜻이다.' }
+    ex:'어머니는 X′X′이므로 어머니가 주는 X염색체는 반드시 X′이다. 아들이 적록색맹이 아니려면 X<sup>R</sup>가 있어야 하는데, 그것은 <b>아버지</b>에게서 온 것이다. 아들은 Y염색체도 가졌으므로 아버지가 <b>X염색체와 Y염색체를 함께</b> 주었다. X염색체와 Y염색체는 <b>감수 1분열에서 서로 다른 극으로 갈라지는 짝</b>이므로, 둘이 함께 들어갔다는 것은 아버지의 <b>감수 1분열</b>에서 비분리가 일어났다는 뜻이다.',
+    fig:{ rows:[{ cells:[ G(['XR','Y'], '아버지의 생식세포<br>X와 Y가 <b>함께</b>'), OP('+'),
+                          G(['Xp'], '어머니의 생식세포'), OP('→'),
+                          Z(['XR','Xp','Y'], '아들 <b>44+XXY</b><br>적록색맹이 아니다') ] }],
+          cap:'X염색체와 Y염색체는 감수 1분열에서 갈라지는 짝이다. 둘이 한 생식세포에 함께 들어갔으므로 <b>감수 1분열</b>이다.' } }
 ];
+
+/* ══════════════════ 해설 도식 ══════════════════
+   ★고른 뒤에 「작은 그림이 딱」 나와 답을 눈으로 확인하게 한다(교사 지시 2026-08-20).
+   ★문항마다 그림을 손으로 그리지 않는다 — 아래 CH(염색체) × G/Z/OP(칸) 로 적으면 figHtml() 이 그린다.
+     막대 길이로 크기를 나타낸다: 1번 > X > 21번 > Y (21번이 사람 상염색체 중 가장 작다).       */
+var CH = {
+  ap  :{ c:'#2f6fd6', t:'21-부', len:32 },
+  am  :{ c:'#8fb8f0', t:'21-모', len:32 },
+  bp  :{ c:'#9b59b6', t:'1-부',  len:44 },
+  bm  :{ c:'#d2a8e0', t:'1-모',  len:44 },
+  n21 :{ c:'#2f6fd6', t:'21번',  len:32 },
+  XR  :{ c:'#2f6fd6', t:'X<sup>R</sup>', len:40 },
+  Xp  :{ c:'#C0392B', t:'X′',    len:40 },
+  Y   :{ c:'#6B7280', t:'Y',     len:26 },
+  none:{ ghost:true,  t:'없음',  len:40 }
+};
+/* 함수 선언은 끌어올려지므로 아래 배열 안에서 바로 쓸 수 있다 */
+function G(chr, cap){ return { k:'gam', chr:chr, cap:cap }; }
+function Z(chr, cap){ return { k:'zyg', chr:chr, cap:cap }; }
+function OP(t){ return { k:'op', t:t }; }
+
+function chrPill(m){
+  var h = m.len, top = 48 - h;
+  return '<figure class="chrp"><svg width="18" height="50" viewBox="0 0 18 50" aria-hidden="true">' +
+         '<rect x="3" y="' + top + '" width="12" height="' + h + '" rx="6" fill="' +
+         (m.ghost ? 'none' : m.c) + '" stroke="#33405A" stroke-width="1.3"' +
+         (m.ghost ? ' stroke-dasharray="3,3"' : '') + '></rect>' +
+         (m.ghost ? '' : '<circle cx="9" cy="' + (top + h / 2).toFixed(1) +
+                         '" r="3.2" fill="#fff" stroke="#33405A" stroke-width="1.1"></circle>') +
+         '</svg><figcaption>' + m.t + '</figcaption></figure>';
+}
+function figHtml(fig){
+  if (!fig || !fig.rows) return '';
+  var out = '<div class="figwrap">';
+  fig.rows.forEach(function(row){
+    out += '<div class="fig">';
+    if (row.lead) out += '<div class="flead">' + row.lead + '</div>';
+    row.cells.forEach(function(c){
+      if (c.k === 'op'){ out += '<div class="fop">' + c.t + '</div>'; return; }
+      var inner = c.chr.map(function(key){ return chrPill(CH[key]); }).join('');
+      out += '<div class="fcell"><div class="fbox' + (c.k === 'zyg' ? ' zyg' : '') + '">' + inner +
+             '</div><div class="fcap">' + c.cap + '</div></div>';
+    });
+    out += '</div>';
+  });
+  if (fig.cap) out += '<div class="fnote">' + fig.cap + '</div>';
+  return out + '</div>';
+}
 
 var pracEls = {};                     /* id → { choices:[버튼], expl:해설칸 } */
 function allQ(){ return PRACTICE.concat(PEDQ); }
@@ -1534,7 +1647,8 @@ function paintPractice(id){
   var ex = refs.expl;
   if (pick === undefined){ ex.style.display = 'none'; ex.innerHTML = ''; return; }
   ex.style.display = 'block';
-  ex.innerHTML = (pick === p.a ? '옳다. ' : '옳지 않다. 옳은 것은 「' + stripTag(p.ch[p.a]) + '」이다. ') + p.ex;
+  ex.innerHTML = (pick === p.a ? '옳다. ' : '옳지 않다. 옳은 것은 「' + stripTag(p.ch[p.a]) + '」이다. ') +
+                 p.ex + figHtml(p.fig);        /* ★고른 뒤에만 그림이 나온다 */
 }
 function pickPractice(id, i){
   if (!practiceOpen()) return false;
