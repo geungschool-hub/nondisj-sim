@@ -130,6 +130,16 @@ table.t tr.hl td{background:var(--yellow-bg);}
 .choice.picked{background:var(--blue);color:#fff;}
 .choice.right{background:var(--green);border-color:var(--green);color:#fff;}
 .choice.dim{border-color:var(--line);color:#9AA1AC;background:#FAFBFC;}
+.choice:disabled{cursor:default;}
+
+/* ── ④ 연습 문항 ── */
+.pq{border:1px solid var(--line);border-radius:12px;background:#FCFDFE;padding:13px 14px 15px;margin-top:14px;}
+.pq .qtext{font-weight:700;font-size:16.5px;line-height:1.65;}
+.pq .qno{display:inline-block;background:var(--amber);color:#fff;border-radius:999px;
+         min-width:26px;padding:1px 9px;font-weight:700;font-size:14px;margin-right:7px;}
+.pq .expl{margin-top:11px;background:var(--amber-bg);border-left:4px solid var(--amber);
+          border-radius:0 9px 9px 0;padding:10px 13px;font-size:15.5px;line-height:1.75;}
+.pq .expl b{color:var(--amber-ink);}
 
 /* ── 서술·모범답안 ── */
 textarea{
@@ -297,6 +307,22 @@ html:not(.unlocked) #draftGate{display:flex;}
     </div>
   </div>
 
+  <!-- ══ ④ 연습 문항 ══ -->
+  <!-- ★문항·선택지·해설을 이 마크업에 두지 않는다 — 본문에 답이 남으면 ②③에서 스스로
+       찾아낼 것을 먼저 읽게 된다. 전부 아래 PRACTICE 배열에서 만들어 붙인다. -->
+  <div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;">
+      <h2 class="amber" style="flex:1 1 240px;margin-bottom:0;">④ 연습 문항</h2>
+      <span class="tag" id="pracScore">0 / 0</span>
+    </div>
+    <p class="sub" style="margin-top:10px;">
+      각 문항은 하나를 고르면 곧바로 해설이 열린다. 다시 골라도 되지만 <b>첫 번째로 고른 것</b>만 기록된다.
+    </p>
+    <div class="msg info hide" id="pracLock"></div>
+    <div id="pracBox"></div>
+    <div class="msg good hide" id="pracDone"></div>
+  </div>
+
   <footer>
     <button class="btn gray" onclick="resetAll()">🔄 처음부터 다시 하기</button>
   </footer>
@@ -444,6 +470,7 @@ function freshState(){
     phase:{ normal:1, nd1:1, nd2:1 },     /* 1 = 감수 1분열, 2 = 감수 2분열 */
     roundDone:{},
     sumPick:{},
+    pPick:{},
     first:{},
     wrong:{},
     ta:{},
@@ -939,6 +966,7 @@ function submitPhase(){
   saveState();
   updateRail();
   updateCmp();
+  renderPractice();
 }
 
 /* 완료한 라운드를 통째로 되돌린다 — 배치·완료표시·요약답을 함께 지워야 비교표가 어긋나지 않는다 */
@@ -957,6 +985,7 @@ function redoRound(){
   render();
   updateCmp();
   refreshAnsGates();
+  renderPractice();          /* 라운드를 되돌리면 ④도 다시 잠긴다 */
   saveState();
   return true;
 }
@@ -1052,6 +1081,7 @@ function pickSummary(cs, i){
   saveState();
   updateCmp();
   refreshAnsGates();
+  renderPractice();          /* 마지막 라운드의 요약에 답하면 여기서 ④가 열린다 */
 }
 function nextRound(){
   round = Math.min(round + 1, 3);
@@ -1131,6 +1161,182 @@ function updateCmp(){
   });
 }
 
+/* ══════════════════ ④ 연습 문항 ══════════════════
+   ★세 라운드를 다 만들고 요약 발문에 답해야 열린다 — ②③에서 학생이 스스로 찾아낼 것을
+     문항이 먼저 알려 주면 활동 전체가 무너진다. 잠금 조건은 다운증후군 연결 문구와 같다.
+   ★첫 시도 정오만 state.first['prac.<id>'] 에 남는다. 다시 골라도 기록은 덮이지 않는다
+     (뒤에 기록 반출을 붙일 때 이 값이 그대로 재료가 된다).
+   ★문항 배치 — ②에서 만든 결과를 다시 쓰게 짰다:
+     p1·p2 = 결과 재현 / p3 = n+1의 구성으로 시기 역추적 / p4·p5 = 수정란 환산 /
+     p6 = 염색체 수만으로는 시기를 가릴 수 없다(p3에서 쓴 근거가 그대로 필요하다).      */
+var PRACTICE = [
+  { id:'p1',
+    q:'감수 1분열에서 21번 염색체가 분리되지 않았다. 이때 만들어진 생식세포 4개의 염색체 수로 옳은 것은?',
+    ch:['<i>n</i>, <i>n</i>, <i>n</i>, <i>n</i>',
+        '<i>n</i>+1, <i>n</i>+1, <i>n</i>−1, <i>n</i>−1',
+        '<i>n</i>, <i>n</i>, <i>n</i>+1, <i>n</i>−1',
+        '<i>n</i>+1, <i>n</i>−1, <i>n</i>−1, <i>n</i>−1'],
+    a:1,
+    ex:'감수 1분열에서 상동염색체가 분리되지 않으면 딸세포 <b>2개가 모두</b> 비정상이 된다. 이어지는 감수 2분열은 정상적으로 일어나므로 그 결과 생식세포 4개가 모두 비정상이 된다.' },
+
+  { id:'p2',
+    q:'염색체 수가 정상인 생식세포와 비정상인 생식세포가 <b>1 : 1</b>로 나타나는 경우는?',
+    ch:['정상적인 생식세포분열',
+        '감수 1분열에서의 염색체 비분리',
+        '감수 2분열에서의 염색체 비분리',
+        '감수 1분열과 감수 2분열에서 모두 일어난 염색체 비분리'],
+    a:2,
+    ex:'감수 2분열의 비분리는 두 딸세포 중 <b>한쪽에서만</b> 일어난다. 비분리가 일어나지 않은 딸세포에서는 정상 생식세포 2개(<i>n</i>, <i>n</i>)가 만들어지고, 일어난 딸세포에서는 <i>n</i>+1과 <i>n</i>−1이 하나씩 만들어진다.' },
+
+  { id:'p3',
+    q:'어떤 <i>n</i>+1 생식세포에 21번 염색체가 2개 들어 있었다. 그 2개는 <b>하나는 아버지에게서, 하나는 어머니에게서</b> 온 것이었다. 비분리가 일어난 시기는?',
+    ch:['감수 1분열',
+        '감수 2분열',
+        '체세포분열',
+        '이 자료만으로는 판정할 수 없다'],
+    a:0,
+    ex:'아버지에게서 온 21번과 어머니에게서 온 21번은 <b>상동염색체</b>이다. 상동염색체가 갈라지는 시기는 감수 1분열이므로, 이 둘이 한 생식세포에 함께 들어갔다면 감수 1분열에서 분리되지 않은 것이다. 감수 2분열의 비분리였다면 같은 염색체가 복제된 <b>염색분체 2개</b>가 들어가므로 둘 다 한쪽 부모에게서 온 것이 된다.' },
+
+  { id:'p4',
+    q:'21번 염색체가 2개 들어 있는 <i>n</i>+1 생식세포가 정상적인 생식세포와 수정하였다. 이 수정란의 21번 염색체 수와 전체 염색체 수는?',
+    ch:['21번 2개 · 전체 46개',
+        '21번 3개 · 전체 47개',
+        '21번 3개 · 전체 46개',
+        '21번 1개 · 전체 45개'],
+    a:1,
+    ex:'정상적인 생식세포에는 21번이 1개 들어 있으므로 2+1=3개가 된다. 21번을 제외한 나머지는 정상이므로 전체 염색체 수는 46+1=<b>47개</b>이다. 21번 염색체를 3개 가진 사람은 <b>다운증후군</b>으로 나타난다.' },
+
+  { id:'p5',
+    q:'21번 염색체가 들어 있지 않은 <i>n</i>−1 생식세포가 정상적인 생식세포와 수정하였다. 이 수정란의 전체 염색체 수는?',
+    ch:['44개', '45개', '46개', '47개'],
+    a:1,
+    ex:'<i>n</i>−1 생식세포에는 21번이 없으므로 수정란의 21번은 정상 생식세포에서 온 1개뿐이다. 따라서 전체 염색체 수는 46−1=<b>45개</b>이다.' },
+
+  { id:'p6',
+    q:'어떤 사람의 체세포를 조사하였더니 21번 염색체가 3개였다. <b>이 결과만으로</b> 비분리가 감수 1분열에서 일어났는지 감수 2분열에서 일어났는지 판정할 수 있는가?',
+    ch:['판정할 수 있다. 21번이 3개가 되는 것은 감수 1분열 비분리뿐이다',
+        '판정할 수 있다. 21번이 3개가 되는 것은 감수 2분열 비분리뿐이다',
+        '판정할 수 없다. 두 시기 모두 21번이 2개 든 생식세포를 만든다',
+        '판정할 수 없다. 21번이 3개인 수정란은 비분리가 없어도 만들어진다'],
+    a:2,
+    ex:'감수 1분열의 비분리도, 감수 2분열의 비분리도 21번이 2개 든 <i>n</i>+1 생식세포를 만든다. 그러므로 <b>염색체 수만으로는 시기를 가릴 수 없다.</b> 시기를 가리려면 그 2개가 서로 다른 상동염색체인지(감수 1분열), 같은 염색체의 염색분체인지(감수 2분열)를 알아야 한다 — 3번 문항에서 쓴 근거가 그것이다.' }
+];
+
+var pracEls = {};                     /* id → { choices:[버튼], expl:해설칸 } */
+function pracById(id){
+  for (var i = 0; i < PRACTICE.length; i++){ if (PRACTICE[i].id === id) return PRACTICE[i]; }
+  return null;
+}
+/* 잠금 조건 = ③의 다운증후군 연결과 같다(세 라운드 완료 + 요약 발문에 답함) */
+function practiceOpen(){
+  if (state.teacherUnlock) return true;
+  return CASES.every(function(c){ return !!state.roundDone[c] && state.sumPick[c] !== undefined; });
+}
+function pracScore(){
+  var n = 0;
+  PRACTICE.forEach(function(p){ if (state.first['prac.' + p.id] === true) n++; });
+  return n;
+}
+function pracAnswered(){
+  var n = 0;
+  PRACTICE.forEach(function(p){ if (state.pPick[p.id] !== undefined) n++; });
+  return n;
+}
+function stripTag(html){ return String(html).replace(/<[^>]*>/g, ''); }
+
+function renderPractice(){
+  var box = document.getElementById('pracBox');
+  if (!box) return;
+  var open = practiceOpen();
+
+  var lock = document.getElementById('pracLock');
+  if (lock){
+    lock.className = 'msg info' + (open ? ' hide' : '');
+    lock.innerHTML = '🔒 세 라운드를 모두 만들고 각 라운드의 요약 발문에 답하면 열린다.';
+  }
+  box.innerHTML = '';
+  pracEls = {};
+  if (!open){ updatePracDone(); return; }
+
+  PRACTICE.forEach(function(p, idx){
+    var card = document.createElement('div');
+    card.className = 'pq';
+
+    var q = document.createElement('div');
+    q.className = 'qtext';
+    q.innerHTML = '<span class="qno">' + (idx + 1) + '</span>' + p.q;
+    card.appendChild(q);
+
+    var wrap = document.createElement('div');
+    wrap.className = 'choices';
+    var btns = [];
+    p.ch.forEach(function(label, i){
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'choice';
+      b.innerHTML = label;
+      b.onclick = (function(pid, k){ return function(){ pickPractice(pid, k); }; })(p.id, i);
+      wrap.appendChild(b);
+      btns.push(b);
+    });
+    card.appendChild(wrap);
+
+    var ex = document.createElement('div');
+    ex.className = 'expl';
+    ex.style.display = 'none';
+    card.appendChild(ex);
+
+    box.appendChild(card);
+    pracEls[p.id] = { choices:btns, expl:ex };
+    paintPractice(p.id);
+  });
+  updatePracDone();
+}
+function paintPractice(id){
+  var p = pracById(id), refs = pracEls[id];
+  if (!p || !refs) return;
+  var pick = state.pPick[id];
+  refs.choices.forEach(function(b, k){
+    b.className = (pick === undefined) ? 'choice' : ('choice' + (k === p.a ? ' right' : ' dim'));
+  });
+  var ex = refs.expl;
+  if (pick === undefined){ ex.style.display = 'none'; ex.innerHTML = ''; return; }
+  ex.style.display = 'block';
+  ex.innerHTML = (pick === p.a ? '옳다. ' : '옳지 않다. 옳은 것은 「' + stripTag(p.ch[p.a]) + '」이다. ') + p.ex;
+}
+function pickPractice(id, i){
+  if (!practiceOpen()) return false;
+  var p = pracById(id);
+  if (!p) return false;
+  var key = 'prac.' + id;
+  if (state.first[key] === undefined) state.first[key] = (i === p.a);   /* 첫 시도만 기록 */
+  state.pPick[id] = i;
+  paintPractice(id);
+  updatePracDone();
+  saveState();
+  return true;
+}
+function updatePracDone(){
+  var open = practiceOpen();
+  var sc = document.getElementById('pracScore');
+  if (sc) sc.textContent = (open ? pracScore() : 0) + ' / ' + PRACTICE.length;
+
+  var el = document.getElementById('pracDone');
+  if (!el) return;
+  if (!open || pracAnswered() < PRACTICE.length){
+    el.className = 'msg good hide';
+    el.innerHTML = '';
+    return;
+  }
+  var n = pracScore();
+  el.className = 'msg good';
+  el.innerHTML = '연습 문항 ' + PRACTICE.length + '문항을 모두 풀었다. 첫 번째 시도에 옳게 답한 것은 <b>' +
+                 n + '문항</b>이다.' +
+                 (n === PRACTICE.length
+                   ? ''
+                   : ' 틀린 문항의 해설을 다시 읽고, 필요하면 ② 무대에서 그 경우를 다시 만들어 확인하시오.');
+}
+
 /* ── 서술·모범답안 잠금 ── */
 var ANS_LABEL = { ansC:'모범답안' };
 function ansGate(key){
@@ -1185,6 +1391,7 @@ function tapProgress(){
       state.teacherUnlock = true;
       saveState();
       refreshAnsGates();
+      renderPractice();
     }
   }
 }
@@ -1222,6 +1429,7 @@ function restoreUI(){
   render();
   updateCmp();
   refreshAnsGates();
+  renderPractice();
   var cs = curCase();
   if (state.roundDone[cs] && state.sumPick[cs] === undefined) openSummary(cs);
 }
@@ -1252,7 +1460,7 @@ function init(){
     if (!state.place[c].m2 || typeof state.place[c].m2 !== 'object') state.place[c].m2 = {};
     if (state.phase[c] !== 1 && state.phase[c] !== 2) state.phase[c] = 1;
   });
-  ['roundDone','sumPick','first','wrong','ta'].forEach(function(k){
+  ['roundDone','sumPick','pPick','first','wrong','ta'].forEach(function(k){
     if (!state[k] || typeof state[k] !== 'object' || Array.isArray(state[k])) state[k] = {};
   });
   if (!state.startedAt) state.startedAt = 'started';
